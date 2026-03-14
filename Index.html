@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OIS - Omniversal Integrated Services</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    .font-heading { font-family: 'Outfit', sans-serif; }
+    .font-body { font-family: 'DM Sans', sans-serif; }
+
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes slideRight { from{opacity:0;transform:translateX(-40px)} to{opacity:1;transform:translateX(0)} }
+    @keyframes pulseGlow { 0%,100%{box-shadow:0 0 20px rgba(0,210,180,0.2)} 50%{box-shadow:0 0 40px rgba(0,210,180,0.4)} }
+    @keyframes gradientShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+    @keyframes countUp { from{opacity:0;transform:scale(0.5)} to{opacity:1;transform:scale(1)} }
+
+    .anim-float { animation: float 4s ease-in-out infinite; }
+    .anim-fade { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; }
+    .anim-slide { animation: slideRight 0.8s ease-out forwards; opacity: 0; }
+    .anim-glow { animation: pulseGlow 3s ease-in-out infinite; }
+
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .delay-5 { animation-delay: 0.5s; }
+    .delay-6 { animation-delay: 0.6s; }
+    .delay-7 { animation-delay: 0.7s; }
+    .delay-8 { animation-delay: 0.8s; }
+
+    .hero-bg {
+      background: linear-gradient(135deg, #0a0f1c 0%, #0d1b2a 30%, #1b2838 60%, #0a0f1c 100%);
+      background-size: 300% 300%;
+      animation: gradientShift 12s ease infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 40%, rgba(0,210,180,0.06) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 60%, rgba(99,102,241,0.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .grid-pattern {
+      background-image:
+        linear-gradient(rgba(0,210,180,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,210,180,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .service-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(0,210,180,0.1);
+      backdrop-filter: blur(10px);
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .service-card:hover {
+      background: rgba(0,210,180,0.08);
+      border-color: rgba(0,210,180,0.4);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0,210,180,0.1);
+    }
+    .service-card:hover .service-icon {
+      transform: scale(1.15) rotate(5deg);
+    }
+    .service-icon {
+      transition: transform 0.4s ease;
+    }
+
+    .accent-line {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, #00d2b4, #6366f1);
+      border-radius: 2px;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.3s;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #00d2b4;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after { width: 100%; }
+
+    .cta-btn {
+      background: linear-gradient(135deg, #00d2b4, #00b89c);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+      transition: left 0.5s;
+    }
+    .cta-btn:hover::before { left: 100%; }
+    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,210,180,0.3); }
+
+    .section-dark { background: #080d19; }
+    .section-darker { background: #060a14; }
+
+    .about-feature {
+      border-left: 3px solid #00d2b4;
+      padding-left: 20px;
+      transition: all 0.3s;
+    }
+    .about-feature:hover { border-left-color: #6366f1; background: rgba(0,210,180,0.03); padding: 16px 16px 16px 20px; border-radius: 0 12px 12px 0; }
+
+    .contact-input {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.3s;
+      color: #e0e0e0;
+    }
+    .contact-input:focus {
+      outline: none;
+      border-color: #00d2b4;
+      background: rgba(0,210,180,0.05);
+      box-shadow: 0 0 20px rgba(0,210,180,0.1);
+    }
+
+    .testimonial-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: all 0.3s;
+    }
+    .testimonial-card:hover {
+      border-color: rgba(0,210,180,0.3);
+      background: rgba(0,210,180,0.04);
+    }
+
+    .mobile-menu {
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+    .mobile-menu.open { transform: translateX(0); }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #080d19; }
+    ::-webkit-scrollbar-thumb { background: #00d2b4; border-radius: 4px; }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full font-body text-gray-300">
+  <div id="app-wrapper" class="w-full h-full overflow-auto"><!-- NAVBAR -->
+   <nav id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-300" style="background: transparent;">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"><a href="#home" class="flex items-center gap-2">
+      <div class="w-10 h-10 rounded-lg flex items-center justify-center font-heading font-black text-lg" style="background: linear-gradient(135deg, #00d2b4, #6366f1); color: #0a0f1c;">
+       O
+      </div><span id="nav-company-name" class="font-heading font-bold text-xl text-white tracking-wide">OIS</span> </a>
+     <div class="hidden md:flex items-center gap-8"><a href="#home" class="nav-link text-sm text-gray-300 hover:text-white">Home</a> <a href="#about" class="nav-link text-sm text-gray-300 hover:text-white">About</a> <a href="#services" class="nav-link text-sm text-gray-300 hover:text-white">Services</a> <a href="#testimonials" class="nav-link text-sm text-gray-300 hover:text-white">Testimonials</a> <a href="#contact" class="nav-link text-sm text-gray-300 hover:text-white">Contact</a> <a href="#contact" class="cta-btn px-5 py-2 rounded-full text-sm font-semibold text-gray-900">Get Started</a>
+     </div><button id="mobile-toggle" class="md:hidden text-white" aria-label="Toggle menu"> <i data-lucide="menu" style="width:28px;height:28px;"></i> </button>
+    </div>
+   </nav><!-- MOBILE MENU -->
+   <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 w-72 h-full z-50 p-8 flex flex-col gap-6" style="background:#0d1b2a;"><button id="mobile-close" class="self-end text-white mb-4" aria-label="Close menu"><i data-lucide="x" style="width:28px;height:28px;"></i></button> <a href="#home" class="text-lg text-gray-200 hover:text-white mobile-nav-link">Home</a> <a href="#about" class="text-lg text-gray-200 hover:text-white mobile-nav-link">About</a> <a href="#services" class="text-lg text-gray-200 hover:text-white mobile-nav-link">Services</a> <a href="#testimonials" class="text-lg text-gray-200 hover:text-white mobile-nav-link">Testimonials</a> <a href="#contact" class="text-lg text-gray-200 hover:text-white mobile-nav-link">Contact</a> <a href="#contact" class="cta-btn px-5 py-3 rounded-full text-sm font-semibold text-gray-900 text-center mt-4">Get Started</a>
+   </div><!-- HERO -->
+   <header id="home" class="hero-bg grid-pattern w-full relative" style="min-height:100%;">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col justify-center" style="min-height:100%;padding-top:120px;padding-bottom:80px;">
+     <div class="flex flex-col lg:flex-row items-center gap-16">
+      <div class="flex-1 text-center lg:text-left">
+       <div class="anim-fade delay-1 inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium mb-6" style="background:rgba(0,210,180,0.1);border:1px solid rgba(0,210,180,0.2);color:#00d2b4;"><span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Trusted Worldwide
+       </div>
+       <h1 id="hero-title" class="anim-fade delay-2 font-heading font-black text-4xl sm:text-5xl lg:text-7xl text-white leading-tight mb-6">One Company.<br><span style="background:linear-gradient(135deg,#00d2b4,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Infinite Solutions.</span></h1>
+       <p id="hero-subtitle" class="anim-fade delay-3 text-lg sm:text-xl text-gray-400 max-w-xl mb-10 leading-relaxed mx-auto lg:mx-0">Your trusted partner for every service under the sun. From IT to logistics, healthcare to construction — OIS delivers excellence across all industries.</p>
+       <div class="anim-fade delay-4 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"><a href="#services" class="cta-btn px-8 py-4 rounded-full font-bold text-gray-900 text-center"> Explore Services <span class="ml-1">→</span> </a> <a href="#contact" class="px-8 py-4 rounded-full font-semibold text-white text-center" style="border:1px solid rgba(255,255,255,0.2);transition:all 0.3s;" onmouseover="this.style.borderColor='#00d2b4';this.style.background='rgba(0,210,180,0.05)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.2)';this.style.background='transparent'"> Contact Us </a>
+       </div>
+      </div><!-- Hero Visual -->
+      <div class="flex-1 hidden lg:flex justify-center">
+       <div class="anim-float relative">
+        <div class="w-72 h-72 rounded-3xl anim-glow flex items-center justify-center" style="background:linear-gradient(135deg,rgba(0,210,180,0.1),rgba(99,102,241,0.1));border:1px solid rgba(0,210,180,0.2);">
+         <svg width="140" height="140" viewbox="0 0 140 140"><circle cx="70" cy="70" r="60" fill="none" stroke="#00d2b4" stroke-width="1" opacity="0.3" /> <circle cx="70" cy="70" r="40" fill="none" stroke="#6366f1" stroke-width="1" opacity="0.3" /> <circle cx="70" cy="70" r="20" fill="#00d2b4" opacity="0.2" /> <circle cx="70" cy="70" r="6" fill="#00d2b4" /> <circle cx="70" cy="10" r="4" fill="#6366f1" /> <circle cx="70" cy="130" r="4" fill="#6366f1" /> <circle cx="10" cy="70" r="4" fill="#00d2b4" /> <circle cx="130" cy="70" r="4" fill="#00d2b4" /> <circle cx="28" cy="28" r="3" fill="#6366f1" opacity="0.7" /> <circle cx="112" cy="28" r="3" fill="#00d2b4" opacity="0.7" /> <circle cx="28" cy="112" r="3" fill="#00d2b4" opacity="0.7" /> <circle cx="112" cy="112" r="3" fill="#6366f1" opacity="0.7" /> <line x1="70" y1="70" x2="70" y2="14" stroke="#6366f1" stroke-width="0.5" opacity="0.4" /> <line x1="70" y1="70" x2="126" y2="70" stroke="#00d2b4" stroke-width="0.5" opacity="0.4" /> <line x1="70" y1="70" x2="70" y2="126" stroke="#6366f1" stroke-width="0.5" opacity="0.4" /> <line x1="70" y1="70" x2="14" y2="70" stroke="#00d2b4" stroke-width="0.5" opacity="0.4" />
+         </svg>
+        </div>
+        <div class="absolute -top-4 -right-4 w-16 h-16 rounded-2xl flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#818cf8);box-shadow:0 10px 30px rgba(99,102,241,0.3);"><i data-lucide="globe" style="width:28px;height:28px;color:white;"></i>
+        </div>
+        <div class="absolute -bottom-4 -left-4 w-16 h-16 rounded-2xl flex items-center justify-center" style="background:linear-gradient(135deg,#00d2b4,#00e6c8);box-shadow:0 10px 30px rgba(0,210,180,0.3);"><i data-lucide="zap" style="width:28px;height:28px;color:#0a0f1c;"></i>
+        </div>
+       </div>
+      </div>
+     </div><!-- Stats -->
+     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-20 anim-fade delay-6">
+      <div class="stat-card rounded-2xl p-6 text-center">
+       <div class="font-heading font-black text-3xl text-white mb-1">
+        500+
+       </div>
+       <div class="text-sm text-gray-500">
+        Services Offered
+       </div>
+      </div>
+      <div class="stat-card rounded-2xl p-6 text-center">
+       <div class="font-heading font-black text-3xl text-white mb-1">
+        50+
+       </div>
+       <div class="text-sm text-gray-500">
+        Countries
+       </div>
+      </div>
+      <div class="stat-card rounded-2xl p-6 text-center">
+       <div class="font-heading font-black text-3xl text-white mb-1">
+        10K+
+       </div>
+       <div class="text-sm text-gray-500">
+        Happy Clients
+       </div>
+      </div>
+      <div class="stat-card rounded-2xl p-6 text-center">
+       <div class="font-heading font-black text-3xl text-white mb-1">
+        24/7
+       </div>
+       <div class="text-sm text-gray-500">
+        Global Support
+       </div>
+      </div>
+     </div>
+    </div>
+   </header><!-- ABOUT -->
+   <section id="about" class="section-dark w-full py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+     <div class="flex flex-col lg:flex-row gap-16 items-center">
+      <div class="flex-1">
+       <div class="accent-line mb-6"></div>
+       <h2 id="about-heading" class="font-heading font-bold text-3xl sm:text-4xl text-white mb-6">Who We Are</h2>
+       <p class="text-gray-400 text-lg leading-relaxed mb-8"><strong class="text-white">OIS (Omniversal Integrated Services)</strong> is a global powerhouse delivering every service imaginable. We bring together world-class expertise across hundreds of industries to serve businesses and individuals worldwide.</p>
+       <div class="flex flex-col gap-6">
+        <div class="about-feature">
+         <h3 class="font-heading font-semibold text-white mb-1">🌍 Global Reach</h3>
+         <p class="text-gray-400 text-sm">Operating across 50+ countries with localized expertise and 24/7 availability.</p>
+        </div>
+        <div class="about-feature">
+         <h3 class="font-heading font-semibold text-white mb-1">⚡ One-Stop Solution</h3>
+         <p class="text-gray-400 text-sm">Why hire 100 companies when OIS handles everything? One partner, infinite capabilities.</p>
+        </div>
+        <div class="about-feature">
+         <h3 class="font-heading font-semibold text-white mb-1">🏆 Excellence Guaranteed</h3>
+         <p class="text-gray-400 text-sm">Industry-leading quality with certified professionals in every domain.</p>
+        </div>
+       </div>
+      </div>
+      <div class="flex-1 grid grid-cols-2 gap-4">
+       <div class="rounded-2xl p-8 text-center" style="background:linear-gradient(135deg,rgba(0,210,180,0.08),rgba(0,210,180,0.02));border:1px solid rgba(0,210,180,0.15);">
+        <div class="text-4xl mb-3">
+         🚀
+        </div>
+        <div class="font-heading font-bold text-white text-sm">
+         Innovation First
+        </div>
+       </div>
+       <div class="rounded-2xl p-8 text-center" style="background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.15);">
+        <div class="text-4xl mb-3">
+         🤝
+        </div>
+        <div class="font-heading font-bold text-white text-sm">
+         Trusted Partner
+        </div>
+       </div>
+       <div class="rounded-2xl p-8 text-center" style="background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.15);">
+        <div class="text-4xl mb-3">
+         💎
+        </div>
+        <div class="font-heading font-bold text-white text-sm">
+         Premium Quality
+        </div>
+       </div>
+       <div class="rounded-2xl p-8 text-center" style="background:linear-gradient(135deg,rgba(0,210,180,0.08),rgba(0,210,180,0.02));border:1px solid rgba(0,210,180,0.15);">
+        <div class="text-4xl mb-3">
+         🌐
+        </div>
+        <div class="font-heading font-bold text-white text-sm">
+         Worldwide Ops
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- SERVICES -->
+   <section id="services" class="section-darker w-full py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+     <div class="text-center mb-16">
+      <div class="accent-line mx-auto mb-6"></div>
+      <h2 class="font-heading font-bold text-3xl sm:text-4xl text-white mb-4">Our Services</h2>
+      <p class="text-gray-400 text-lg max-w-2xl mx-auto">Whatever you need, wherever you need it — OIS has the expertise to deliver.</p>
+     </div><!-- Service Filter -->
+     <div class="flex flex-wrap justify-center gap-3 mb-12" id="service-filter"><button class="filter-btn active px-5 py-2 rounded-full text-sm font-medium transition-all" data-filter="all">All Services</button> <button class="filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all" data-filter="tech">Technology</button> <button class="filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all" data-filter="business">Business</button> <button class="filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all" data-filter="life">Lifestyle</button> <button class="filter-btn px-5 py-2 rounded-full text-sm font-medium transition-all" data-filter="industry">Industry</button>
+     </div>
+     <div id="services-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+     </div>
+     <div class="text-center mt-12">
+      <p class="text-gray-500 text-sm">...and <strong class="text-white">hundreds more</strong>. Whatever service you can imagine, OIS can provide it.</p>
+     </div>
+    </div>
+   </section><!-- TESTIMONIALS -->
+   <section id="testimonials" class="section-dark w-full py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+     <div class="text-center mb-16">
+      <div class="accent-line mx-auto mb-6"></div>
+      <h2 class="font-heading font-bold text-3xl sm:text-4xl text-white mb-4">What Our Clients Say</h2>
+      <p class="text-gray-400 text-lg">Trusted by businesses and individuals across the globe.</p>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="testimonial-card rounded-2xl p-8">
+       <div class="flex gap-1 mb-4"><span style="color:#00d2b4;">★</span><span style="color:#00d2b4;">★</span><span style="color:#00d2b4;">★</span><span style="color:#00d2b4;">★</span><span style="color:#00d2b4;">★</span>
+       </div>
+       <p class="text-gray-300 mb-6 leading-relaxed">"OIS handled our entire IT infrastructure, marketing, and logistics — all under one roof. Incredible efficiency and quality!"</p>
+       <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm" style="background:linear-gradient(135deg,#00d2b4,#6366f1);color:#0a0f1c;">
+         AK
+        </div>
+        <div>
+         <div class="text-white font-semibold text-sm">
+          Ahmed Khan
+         </div>
+         <div class="text-gray-500 text-xs">
+          CEO, TechVision Inc.
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="testimonial-card rounded-2xl p-8">
+       <div class="flex gap-1 mb-4"><span style="color:#00d2b4;">★</span><span style="color:#00d2b4;">★</span><span style="color:#00d2b4;">★</span><span style="color:#00d2b4;">★</span><span style="color:#00d2b4;">★</span>
+       </div>
+       <p class="text-gray-300 mb-6 leading-relaxed">"From construction planning to interior design, OIS delivered our dream office. Their range of services is truly unmatched."</p>
+       <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm" style="background:linear-gradient(135deg,#6366f1,#818cf8);color:white;">
+         SR
+        </div>
+        <div>
+         <div class="text-white font-semibold text-sm">
+          Sarah Rodriguez
+         </div>
+         <div class="text-gray-500 text-xs">
+          Director, BuildPro LLC
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="testimonial-card rounded-2xl p-8">
+       <div class="flex gap-1 mb-4"><span style="color:#00d2b4;">★</span><span style="color:#00d2b4;">★</span><span style="color:#00d2b4;">★</span><span style="color:#00d2b4;">★</span><span style="color:#00d2b4;">★</span>
+       </div>
+       <p class="text-gray-300 mb-6 leading-relaxed">"We needed legal, financial, and HR services across 5 countries. OIS made it seamless. They truly are a one-stop solution."</p>
+       <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm" style="background:linear-gradient(135deg,#00d2b4,#00e6c8);color:#0a0f1c;">
+         LW
+        </div>
+        <div>
+         <div class="text-white font-semibold text-sm">
+          Li Wei
+         </div>
+         <div class="text-gray-500 text-xs">
+          CFO, GlobalTrade Asia
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- CONTACT -->
+   <section id="contact" class="section-darker w-full py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+     <div class="flex flex-col lg:flex-row gap-16">
+      <div class="flex-1">
+       <div class="accent-line mb-6"></div>
+       <h2 class="font-heading font-bold text-3xl sm:text-4xl text-white mb-4">Get In Touch</h2>
+       <p class="text-gray-400 text-lg mb-10">Ready to experience the OIS difference? Reach out and let us know how we can help.</p>
+       <div class="flex flex-col gap-6">
+        <div class="flex items-center gap-4">
+         <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(0,210,180,0.1);">
+          <i data-lucide="mail" style="width:20px;height:20px;color:#00d2b4;"></i>
+         </div>
+         <div>
+          <div class="text-gray-500 text-xs">
+           Email
+          </div>
+          <div id="display-email" class="text-white font-medium">
+           info@ois.com
+          </div>
+         </div>
+        </div>
+        <div class="flex items-center gap-4">
+         <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(99,102,241,0.1);">
+          <i data-lucide="phone" style="width:20px;height:20px;color:#6366f1;"></i>
+         </div>
+         <div>
+          <div class="text-gray-500 text-xs">
+           Phone
+          </div>
+          <div id="display-phone" class="text-white font-medium">
+           +92 300 1234567
+          </div>
+         </div>
+        </div>
+        <div class="flex items-center gap-4">
+         <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(0,210,180,0.1);">
+          <i data-lucide="map-pin" style="width:20px;height:20px;color:#00d2b4;"></i>
+         </div>
+         <div>
+          <div class="text-gray-500 text-xs">
+           Headquarters
+          </div>
+          <div class="text-white font-medium">
+           Worldwide Operations
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="flex-1">
+       <form id="contact-form" class="flex flex-col gap-4 rounded-2xl p-8" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+         <div><label for="name-input" class="text-sm text-gray-400 mb-2 block">Your Name</label> <input id="name-input" type="text" class="contact-input w-full px-4 py-3 rounded-xl font-body" placeholder="John Doe">
+         </div>
+         <div><label for="email-input" class="text-sm text-gray-400 mb-2 block">Your Email</label> <input id="email-input" type="email" class="contact-input w-full px-4 py-3 rounded-xl font-body" placeholder="john@example.com">
+         </div>
+        </div>
+        <div><label for="service-select" class="text-sm text-gray-400 mb-2 block">Service Needed</label> <select id="service-select" class="contact-input w-full px-4 py-3 rounded-xl font-body"> <option value="">Select a service category</option> <option>Technology &amp; IT</option> <option>Business &amp; Finance</option> <option>Healthcare &amp; Wellness</option> <option>Construction &amp; Real Estate</option> <option>Education &amp; Training</option> <option>Marketing &amp; Creative</option> <option>Legal &amp; Compliance</option> <option>Logistics &amp; Transportation</option> <option>Other</option> </select>
+        </div>
+        <div><label for="message-input" class="text-sm text-gray-400 mb-2 block">Your Message</label> <textarea id="message-input" rows="4" class="contact-input w-full px-4 py-3 rounded-xl font-body resize-none" placeholder="Tell us what you need..."></textarea>
+        </div><button type="submit" class="cta-btn px-8 py-4 rounded-xl font-bold text-gray-900 mt-2"> Send Message <span class="ml-1">→</span> </button>
+        <div id="form-success" class="hidden text-center py-3 rounded-xl text-sm font-medium" style="background:rgba(0,210,180,0.1);color:#00d2b4;">
+         ✓ Message sent successfully! We'll get back to you soon.
+        </div>
+       </form>
+      </div>
+     </div>
+    </div>
+   </section><!-- FOOTER -->
+   <footer class="w-full py-12 px-6" style="background:#050910;border-top:1px solid rgba(255,255,255,0.04);">
+    <div class="max-w-7xl mx-auto">
+     <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+      <div class="flex items-center gap-2">
+       <div class="w-8 h-8 rounded-lg flex items-center justify-center font-heading font-black text-sm" style="background:linear-gradient(135deg,#00d2b4,#6366f1);color:#0a0f1c;">
+        O
+       </div><span id="footer-company-name" class="font-heading font-bold text-white">OIS</span>
+      </div>
+      <p class="text-gray-600 text-sm">© 2025 OIS — Omniversal Integrated Services. All rights reserved.</p>
+      <div class="flex gap-4"><span class="w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-all" style="background:rgba(255,255,255,0.05);" onmouseover="this.style.background='rgba(0,210,180,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'"><i data-lucide="twitter" style="width:16px;height:16px;color:#999;"></i></span> <span class="w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-all" style="background:rgba(255,255,255,0.05);" onmouseover="this.style.background='rgba(0,210,180,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'"><i data-lucide="linkedin" style="width:16px;height:16px;color:#999;"></i></span> <span class="w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-all" style="background:rgba(255,255,255,0.05);" onmouseover="this.style.background='rgba(0,210,180,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'"><i data-lucide="instagram" style="width:16px;height:16px;color:#999;"></i></span> <span class="w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-all" style="background:rgba(255,255,255,0.05);" onmouseover="this.style.background='rgba(0,210,180,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'"><i data-lucide="facebook" style="width:16px;height:16px;color:#999;"></i></span>
+      </div>
+     </div>
+    </div>
+   </footer>
+  </div>
+  <script>
+    // Services Data
+    const services = [
+      { name: 'Web Development', icon: 'code', cat: 'tech', desc: 'Custom websites, apps & platforms' },
+      { name: 'Mobile Apps', icon: 'smartphone', cat: 'tech', desc: 'iOS & Android development' },
+      { name: 'Cloud Solutions', icon: 'cloud', cat: 'tech', desc: 'AWS, Azure & cloud infrastructure' },
+      { name: 'Cybersecurity', icon: 'shield', cat: 'tech', desc: 'Protection & threat management' },
+      { name: 'AI & Machine Learning', icon: 'cpu', cat: 'tech', desc: 'Smart automation & analytics' },
+      { name: 'Data Analytics', icon: 'bar-chart-2', cat: 'tech', desc: 'Insights from your data' },
+      { name: 'Digital Marketing', icon: 'megaphone', cat: 'business', desc: 'SEO, SEM & social media' },
+      { name: 'Graphic Design', icon: 'palette', cat: 'business', desc: 'Branding & visual identity' },
+      { name: 'Accounting & Finance', icon: 'calculator', cat: 'business', desc: 'Bookkeeping & tax planning' },
+      { name: 'Legal Services', icon: 'scale', cat: 'business', desc: 'Contracts, compliance & law' },
+      { name: 'HR & Recruitment', icon: 'users', cat: 'business', desc: 'Talent acquisition & management' },
+      { name: 'Project Management', icon: 'clipboard', cat: 'business', desc: 'Planning & execution support' },
+      { name: 'Healthcare', icon: 'heart', cat: 'life', desc: 'Medical consulting & services' },
+      { name: 'Education & Training', icon: 'book-open', cat: 'life', desc: 'Courses & skill development' },
+      { name: 'Event Management', icon: 'calendar', cat: 'life', desc: 'Corporate & personal events' },
+      { name: 'Travel & Tourism', icon: 'plane', cat: 'life', desc: 'Planning & tour packages' },
+      { name: 'Fitness & Wellness', icon: 'activity', cat: 'life', desc: 'Personal training & programs' },
+      { name: 'Food & Catering', icon: 'coffee', cat: 'life', desc: 'Catering & food services' },
+      { name: 'Construction', icon: 'hard-hat', cat: 'industry', desc: 'Building & infrastructure' },
+      { name: 'Real Estate', icon: 'home', cat: 'industry', desc: 'Property deals & management' },
+      { name: 'Logistics', icon: 'truck', cat: 'industry', desc: 'Shipping & supply chain' },
+      { name: 'Manufacturing', icon: 'settings', cat: 'industry', desc: 'Production & quality control' },
+      { name: 'Energy Solutions', icon: 'zap', cat: 'industry', desc: 'Solar, wind & power systems' },
+      { name: 'Agriculture', icon: 'leaf', cat: 'industry', desc: 'Farming tech & consulting' },
+    ];
+
+    let currentFilter = 'all';
+
+    function renderServices(filter) {
+      const grid = document.getElementById('services-grid');
+      const filtered = filter === 'all' ? services : services.filter(s => s.cat === filter);
+      grid.innerHTML = '';
+      filtered.forEach((s, i) => {
+        const card = document.createElement('div');
+        card.className = `service-card rounded-2xl p-6 anim-fade delay-${Math.min(i % 4 + 1, 4)}`;
+        card.innerHTML = `
+          <div class="service-icon w-12 h-12 rounded-xl flex items-center justify-center mb-4" style="background:rgba(0,210,180,0.1);">
+            <i data-lucide="${s.icon}" style="width:22px;height:22px;color:#00d2b4;"></i>
+          </div>
+          <h3 class="font-heading font-semibold text-white text-base mb-2">${s.name}</h3>
+          <p class="text-gray-500 text-sm">${s.desc}</p>
+        `;
+        grid.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => {
+          b.style.background = 'rgba(255,255,255,0.05)';
+          b.style.color = '#999';
+          b.style.border = '1px solid transparent';
+        });
+        this.style.background = 'rgba(0,210,180,0.15)';
+        this.style.color = '#00d2b4';
+        this.style.border = '1px solid rgba(0,210,180,0.3)';
+        currentFilter = this.dataset.filter;
+        renderServices(currentFilter);
+      });
+    });
+
+    // Init filter styles
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.style.background = 'rgba(255,255,255,0.05)';
+      b.style.color = '#999';
+      if (b.dataset.filter === 'all') {
+        b.style.background = 'rgba(0,210,180,0.15)';
+        b.style.color = '#00d2b4';
+        b.style.border = '1px solid rgba(0,210,180,0.3)';
+      }
+    });
+
+    renderServices('all');
+
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    document.getElementById('app-wrapper').addEventListener('scroll', function() {
+      if (this.scrollTop > 50) {
+        navbar.style.background = 'rgba(8,13,25,0.95)';
+        navbar.style.backdropFilter = 'blur(20px)';
+        navbar.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+      } else {
+        navbar.style.background = 'transparent';
+        navbar.style.backdropFilter = 'none';
+        navbar.style.borderBottom = 'none';
+      }
+    });
+
+    // Mobile menu
+    document.getElementById('mobile-toggle').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.add('open');
+    });
+    document.getElementById('mobile-close').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.remove('open');
+    });
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('mobile-menu').classList.remove('open');
+      });
+    });
+
+    // Contact form
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const success = document.getElementById('form-success');
+      success.classList.remove('hidden');
+      this.reset();
+      setTimeout(() => success.classList.add('hidden'), 4000);
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Element SDK
+    const defaultConfig = {
+      company_name: 'OIS',
+      hero_title: 'One Company. Infinite Solutions.',
+      hero_subtitle: 'Your trusted partner for every service under the sun. From IT to logistics, healthcare to construction — OIS delivers excellence across all industries.',
+      contact_email: 'info@ois.com',
+      contact_phone: '+92 300 1234567',
+      background_color: '#0a0f1c',
+      surface_color: '#080d19',
+      text_color: '#e0e0e0',
+      accent_color: '#00d2b4',
+      secondary_accent: '#6366f1',
+      font_family: 'Outfit',
+      font_size: 16
+    };
+
+    function applyConfig(config) {
+      const c = { ...defaultConfig, ...config };
+
+      // Text content
+      document.getElementById('nav-company-name').textContent = c.company_name;
+      document.getElementById('footer-company-name').textContent = c.company_name;
+
+      const heroTitle = document.getElementById('hero-title');
+      const parts = c.hero_title.split('.');
+      if (parts.length > 1) {
+        heroTitle.innerHTML = `${parts[0]}.<br><span style="background:linear-gradient(135deg,${c.accent_color},${c.secondary_accent});-webkit-background-clip:text;-webkit-text-fill-color:transparent;">${parts.slice(1).join('.').trim()}</span>`;
+      } else {
+        heroTitle.textContent = c.hero_title;
+      }
+
+      document.getElementById('hero-subtitle').textContent = c.hero_subtitle;
+      document.getElementById('display-email').textContent = c.contact_email;
+      document.getElementById('display-phone').textContent = c.contact_phone;
+
+      // Font
+      const fontStack = `${c.font_family}, DM Sans, sans-serif`;
+      document.querySelectorAll('.font-heading').forEach(el => el.style.fontFamily = fontStack);
+      document.body.style.fontFamily = `DM Sans, ${c.font_family}, sans-serif`;
+
+      // Font size
+      const base = c.font_size;
+      document.getElementById('hero-subtitle').style.fontSize = `${base * 1.15}px`;
+      document.getElementById('about-heading').style.fontSize = `${base * 2.2}px`;
+
+      // Colors
+      document.body.style.color = c.text_color;
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => applyConfig(config),
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+            { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+            { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+            { get: () => config.accent_color || defaultConfig.accent_color, set: (v) => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } },
+            { get: () => config.secondary_accent || defaultConfig.secondary_accent, set: (v) => { config.secondary_accent = v; window.elementSdk.setConfig({ secondary_accent: v }); } },
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['company_name', config.company_name || defaultConfig.company_name],
+          ['hero_title', config.hero_title || defaultConfig.hero_title],
+          ['hero_subtitle', config.hero_subtitle || defaultConfig.hero_subtitle],
+          ['contact_email', config.contact_email || defaultConfig.contact_email],
+          ['contact_phone', config.contact_phone || defaultConfig.contact_phone],
+        ])
+      });
+    }
+
+    lucide.createIcons();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dc2e20be5b84bda',t:'MTc3MzQ4NzE2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
